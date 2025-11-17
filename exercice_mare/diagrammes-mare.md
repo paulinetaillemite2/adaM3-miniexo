@@ -116,6 +116,11 @@ classDiagram
         -notifyObservers() void
     }
     
+    class Behavior {
+        <<interface>>
+        +act() string
+    }
+    
     class ActiveBehavior {
         +act() string
     }
@@ -148,10 +153,11 @@ classDiagram
     WeatherObserver <|.. AdaptiveCreature : implements
     Weather ..> WeatherObserver : notifies
     AdaptiveCreature --> Weather : observes
-    AdaptiveCreature --> ActiveBehavior : uses
-    AdaptiveCreature --> SleepingBehavior : uses
-    AdaptiveCreature --> HidingBehavior : uses
-    AdaptiveCreature --> NightActiveBehavior : uses
+    Behavior <|.. ActiveBehavior : implements
+    Behavior <|.. SleepingBehavior : implements
+    Behavior <|.. HidingBehavior : implements
+    Behavior <|.. NightActiveBehavior : implements
+    AdaptiveCreature --> Behavior : uses
     AdaptiveCreature <|-- NocturnalCreature : extends
 ```
 

@@ -131,25 +131,41 @@ class Creature
   end
   
   # EXERCICE 4: Observer + Strategy - Météo et comportements
+  
+  # Interface Behavior pour le pattern Strategy
+  module Behavior
+    def act
+      raise NotImplementedError, "Cette méthode doit être implémentée"
+    end
+  end
+  
   class ActiveBehavior
+    include Behavior
+    
     def act
       "Est actif et explore 🌞"
     end
   end
   
   class SleepingBehavior
+    include Behavior
+    
     def act
       "Dort paisiblement 😴"
     end
   end
   
   class HidingBehavior
+    include Behavior
+    
     def act
       "Se cache pour se protéger 🏠"
     end
   end
   
   class NightActiveBehavior
+    include Behavior
+    
     def act
       "Devient actif la nuit 🌙"
     end
