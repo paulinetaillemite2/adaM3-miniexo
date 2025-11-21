@@ -1,64 +1,119 @@
-//créer l'interface : contrat de rendu EN GROS C'EST LA PAYLOAD
-interface Todo {
+// Type générique pour les réponses de l'API DummyJSON
+type ApiResponse<TItem, TKey extends string> = {
+    [K in TKey]: TItem[];
+} & {
+    total: number;
+    skip: number;
+    limit: number;
+}
+
+//créer le type : contrat de rendu EN GROS C'EST LA PAYLOAD
+type Todo = {
     id: number;
     todo: string; 
     completed: boolean;
     userId: number;
 }
 
-// créer interface pour la réponse complète de l'API cqui contient todos, total ,skip, limit
+// Utiliser le type générique pour TodosResponse
+type TodosResponse = ApiResponse<Todo, 'todos'>
 
-interface TodosResponse {
-    todos: Todo[];
-    total: number;
-    skip: number;
-    limit: number;
+// Types pour Users
+type Coordinates = {
+    lat: number;
+    lng: number;
 }
 
-// créer la fonction getTodos() pour le retour de toute l'api
-async function getTodos(): Promise<TodosResponse> {
-    const response = await fetch("https://dummyjson.com/todos")
-    if (!response.ok){
+type Address = {
+    address: string;
+    city: string;
+    state: string;
+    stateCode: string;
+    postalCode: string;
+    coordinates: Coordinates;
+    country: string;
+}
+
+type Hair = {
+    color: string;
+    type: string;
+}
+
+type Bank = {
+    cardExpire: string;
+    cardNumber: string;
+    cardType: string;
+    currency: string;
+    iban: string;
+}
+
+type Company = {
+    department: string;
+    name: string;
+    title: string;
+    address: Address;
+}
+
+type UserCrypto = {
+    coin: string;
+    wallet: string;
+    network: string;
+}
+
+type User = {
+    id: number;
+    firstName: string;
+    lastName: string;
+    maidenName: string;
+    age: number;
+    gender: string;
+    email: string;
+    phone: string;
+    username: string;
+    password: string;
+    birthDate: string;
+    image: string;
+    bloodGroup: string;
+    height: number;
+    weight: number;
+    eyeColor: string;
+    hair: Hair;
+    ip: string;
+    address: Address;
+    macAddress: string;
+    university: string;
+    bank: Bank;
+    company: Company;
+    ein: string;
+    ssn: string;
+    userAgent: string;
+    crypto: UserCrypto;
+    role: string;
+}
+
+// Utiliser le type générique pour UsersResponse
+type UsersResponse = ApiResponse<User, 'users'>
+
+async function listDummy<T>(route: string): Promise<T> {
+    const response = await fetch(`https://dummyjson.com/${route}`);
+    if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`);
     }
-
-    const data: TodosResponse = await response.json();
+    
+    const data: T = await response.json();
     return data;
 }
 
-// créer la fonction getTodo (id) pour une todo
-async function getTodo(id: number): Promise<Todo> {
-    const response = await fetch (`https://dummyjson.com/todos/${id}`)
-    if (!response.ok){
-        throw new Error(`Erreur HTTP: ${response.status}`);
-    }
 
-    const data: Todo = await response.json();
-    return data;
-}
-
-// test todos
-async function testGetTodos() {
+//
+async function testListDummy() {
     try {
-        const result = await getTodos();
-        console.log("Réponse de l'API:", result);
-        console.log("Nombre de todos:", result.todos.length);
-        console.log("Premier todo:", result.todos[0]);
+        const result = await listDummy<UsersResponse>('users');
+        console.log("Résultat:", result);
+        console.log("Nombre de users:", result.users.length);
     } catch (error) {
         console.error("Erreur:", error);
     }
 }
 
-//testGetTodos();
-
-//test todo 
-async function testTodo(id: number) {
-    try{
-        const result = await getTodo(id);
-        console.log(result)
-    }
-    catch (error){
-        console.error("Erreur:", error);
-    }
-}
-testTodo(3)
+testListDummy()
