@@ -37,7 +37,7 @@ async function getTodo(id: number): Promise<Todo> {
     return data;
 }
 
-// Fonction de test pour voir la réponse (merci claude)
+// test todos
 async function testGetTodos() {
     try {
         const result = await getTodos();
@@ -49,5 +49,16 @@ async function testGetTodos() {
     }
 }
 
-// Décommenter la ligne suivante pour tester
-testGetTodos();
+//testGetTodos();
+
+//test todo 
+async function testTodo(id: number) {
+    try{
+        const result = await getTodo(id);
+        console.log(result)
+    }
+    catch (error){
+        console.error("Erreur:", error);
+    }
+}
+//testTodo(3)
