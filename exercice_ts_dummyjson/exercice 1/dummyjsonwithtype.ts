@@ -1,56 +1,64 @@
-type Column = {
-    type: string;
-    name: string;
-};
-
-type CellRenderer = (value: any, columnName: any) => string;
-
-function renderMarkdownTable(columns: Column[], rows: any[], cellRenderer: CellRenderer): string {
-    if (columns.length === 0) {
-        return "";
-    }
-
-    const headers = columns.map((col) => col.name).join(" | ");
-    const separator = columns.map(() => "---").join(" | ");
-    const dataRows = rows.map((row) => {
-        return columns
-            .map((col, index) => {
-                const value = row[col.name];
-                return cellRenderer(value, col.name);
-            })
-            .join(" | ");
-    });
-
-    // Assemblage final
-    return [headers, separator, ...dataRows].join("\n");
+//créer le type : contrat de rendu EN GROS C'EST LA PAYLOAD
+type TodoType = {
+    id: number;
+    todo: string; 
+    completed: boolean;
+    userId: number;
 }
 
-// Exemple d'utilisation
-const columns = [
-    {type: "int4", name: "id"},
-    {type: "text", name: "title"},
-];
+// créer type pour la réponse complète de l'API qui contient todos, total, skip, limit
 
-type MyRow = {
-    id: number;
-    title: string;
-};
+type TodosResponseType = {
+    todos: TodoType[];
+    total: number;
+    skip: number;
+    limit: number;
+}
 
-const rows: MyRow[] = [
-    {id: 1, title: "Bonjour"},
-    {id: 2, title: "Au revoir"},
-];
-
-const result = renderMarkdownTable(columns, rows, (value, columnName) => {
-    // Exemple : formater les IDs avec un préfixe
-    if (columnName === "id") {
-        return `#${value}`;
+// créer la fonction getTodosType() pour le retour de toute l'api
+async function getTodosType(): Promise<TodosResponseType> {
+    const response = await fetch("https://dummyjson.com/todos")
+    if (!response.ok){
+        throw new Error(`Erreur HTTP: ${response.status}`);
     }
-    // Exemple : mettre les titres en majuscules
-    if (columnName === "title") {
-        return `"${value}"`;
-    }
-    return value.toString();
-});
 
-console.log(result);
+    const data: TodosResponseType = await response.json();
+    return data;
+}
+
+// créer la fonction getTodoType (id) pour une todo
+async function getTodoType(id: number): Promise<TodoType> {
+    const response = await fetch (`https://dummyjson.com/todos/${id}`)
+    if (!response.ok){
+        throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+
+    const data: TodoType = await response.json();
+    return data;
+}
+
+// test todos
+async function testGetTodosType() {
+    try {
+        const result = await getTodosType();
+        console.log("Réponse de l'API:", result);
+        console.log("Nombre de todos:", result.todos.length);
+        console.log("Premier todo:", result.todos[0]);
+    } catch (error) {
+        console.error("Erreur:", error);
+    }
+}
+
+//testGetTodosType();
+
+//test todo 
+async function testTodoType(id: number) {
+    try{
+        const result = await getTodoType(id);
+        console.log(result)
+    }
+    catch (error){
+        console.error("Erreur:", error);
+    }
+}
+testTodoType(3)
